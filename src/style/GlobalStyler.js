@@ -27,6 +27,11 @@ button {
   padding: 10px 20px;
   border-radius: 4px;
   font-size: 700;
+  transform: all 300ms;
+}
+
+button:hover {
+  filter: brightness(75%);
 }
 
 a {
@@ -48,7 +53,7 @@ body .Toastify .Toastify_toast-container .Toastify_toast--error {
 `;
 
 export const Container = styled.section`
-  max-width: 360px;
+  max-width: 480px;
   background: #fff;
   margin: 30px auto;
   padding: 30px;
