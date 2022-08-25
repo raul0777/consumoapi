@@ -3,31 +3,39 @@ import { get } from 'lodash';
 import { isEmail, isInt, isFloat } from 'validator';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-import { useDispatch } from "react-redux";
-import axios from '../../server/axios';
-import history from '../../server/history';
-import { Container } from '../../style/GlobalStyler';
-import { Form } from './styled';
-import Loading from '../../components/Loading';
+import { useDispatch } from 'react-redux';
+import { FaUserCircle, FaEdit } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-export default function Aluno({ match }) {
+import axios from '../../services/axios';
+import { Container } from '../../styles/GlobalStyles';
+import { Form, ProfilePicture, Title } from './styled';
+import Loading from '../../components/Loading';
+import * as actions from '../../store/modules/auth/actions';
+
+export default function Aluno({ match, history }) {
   const dispatch = useDispatch();
-  const id = get(match, 'params.id', 0);
+
+  const id = get(match, 'params.id', '');
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
   const [idade, setIdade] = useState('');
   const [peso, setPeso] = useState('');
   const [altura, setAltura] = useState('');
+  const [foto, setFoto] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!id) return;
+
     async function getData() {
       try {
         setIsLoading(true);
         const { data } = await axios.get(`/alunos/${id}`);
         const Foto = get(data, 'Fotos[0].url', '');
+
+        setFoto(Foto);
 
         setNome(data.nome);
         setSobrenome(data.sobrenome);
@@ -46,79 +54,105 @@ export default function Aluno({ match }) {
         history.push('/');
       }
     }
+
     getData();
-  }, [id]);
+  }, [id, history]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     let formErrors = false;
+
     if (nome.length < 3 || nome.length > 255) {
-      toast.error('Nome precisa ter entre 3 e 255 caracteres.');
+      toast.error('Nome precisa ter entre 3 e 255 caracteres');
       formErrors = true;
     }
+
     if (sobrenome.length < 3 || sobrenome.length > 255) {
-      toast.error('Sobrenome precisa ter entre 3 e 255 caracteres.');
+      toast.error('Sobrenome precisa ter entre 3 e 255 caracteres');
       formErrors = true;
     }
+
     if (!isEmail(email)) {
       toast.error('E-mail inválido');
       formErrors = true;
     }
+
     if (!isInt(String(idade))) {
-      toast.error('Idade inválido');
+      toast.error('Idade inválida');
       formErrors = true;
     }
+
     if (!isFloat(String(peso))) {
       toast.error('Peso inválido');
       formErrors = true;
     }
+
     if (!isFloat(String(altura))) {
       toast.error('Altura inválida');
       formErrors = true;
     }
+
     if (formErrors) return;
 
     try {
       setIsLoading(true);
-      id (id) {
+
+      if (id) {
         await axios.put(`/alunos/${id}`, {
-          nome,
-          sobrenome,
-          email, idade,
-          peso,
-          altura,
-        });
-        toast.success('Aluno(a) editado(a) com sucesso!');
-      } else {
-          const { data } = await axios.put(`/alunos/`, {
           nome,
           sobrenome,
           email,
           idade,
           peso,
           altura,
-          });
-          toast.success('Aluno(a) criado(a) com sucesso!');
-          history.push(`/aluno/${data.id}/edit`);
+        });
+        toast.success('Aluno(a) editado(a) com sucesso!');
+      } else {
+        const { data } = await axios.post(`/alunos/`, {
+          nome,
+          sobrenome,
+          email,
+          idade,
+          peso,
+          altura,
+        });
+        toast.success('Aluno(a) criado(a) com sucesso!');
+        history.push(`/aluno/${data.id}/edit`);
       }
-       setIsLoading(false);
-    }catch (err) {
-      catch status = get(err, 'response.status', 0);
-      catch data = get(err, 'response.data', {});
-      catch errors = get(err, 'response.errors', []);
+
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+      const status = get(err, 'response.status', 0);
+      const data = get(err, 'response.data', {});
+      const errors = get(data, 'errors', []);
 
       if (errors.length > 0) {
-        errors.map(error => toast.error(error));
+        errors.map((error) => toast.error(error));
+      } else {
+        toast.error('Erro desconhecido');
       }
+
       if (status === 401) dispatch(actions.loginFailure());
-      }
+    }
   };
 
   return (
     <Container>
       <Loading isLoading={isLoading} />
-      <h1>{id ? 'Editar aluno' : 'Novo aluno'}</h1>
-      <Form>
+
+      <Title>{id ? 'Editar aluno' : 'Novo Aluno'}</Title>
+
+      {id && (
+        <ProfilePicture>
+          {foto ? <img src={foto} alt={nome} /> : <FaUserCircle size={180} />}
+          <Link to={`/fotos/${id}`}>
+            <FaEdit size={24} />
+          </Link>
+        </ProfilePicture>
+      )}
+
+      <Form onSubmit={handleSubmit}>
         <input
           type="text"
           value={nome}
@@ -155,11 +189,14 @@ export default function Aluno({ match }) {
           onChange={(e) => setAltura(e.target.value)}
           placeholder="Altura"
         />
+
         <button type="submit">Enviar</button>
       </Form>
     </Container>
   );
 }
+
 Aluno.propTypes = {
   match: PropTypes.shape({}).isRequired,
+  history: PropTypes.shape([]).isRequired,
 };

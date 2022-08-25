@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '../../style/GlobalStyler';
+import { Container } from '../../styles/GlobalStyles';
 
 export default function Page404() {
   return (

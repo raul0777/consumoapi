@@ -1,5 +1,5 @@
 import * as types from '../types';
-import axios from '../../../server/axios';
+import axios from '../../../services/axios';
 
 const initialState = {
   isLoggedIn: false,

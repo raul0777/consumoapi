@@ -3,10 +3,10 @@ import { toast } from 'react-toastify';
 import { isEmail } from 'validator';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Container } from '../../style/GlobalStyler';
+import { Container } from '../../styles/GlobalStyles';
 import { Form } from './styled';
 import Loading from '../../components/Loading';
-import * as actions from '../../storybook/modules/auth/actions';
+import * as actions from '../../store/modules/auth/actions';
 
 export default function Register(props) {
   const dispatch = useDispatch();

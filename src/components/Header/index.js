@@ -8,7 +8,7 @@ import {
 } from 'react-icons/fa';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import * as actions from '../../storybook/modules/auth/actions';
+import * as actions from '../../store/modules/auth/actions';
 import { Nav } from './styled';
 
 export default function Header() {

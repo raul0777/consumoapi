@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { get } from 'lodash';
 import * as actions from './actions';
 import * as types from '../types';
-import axios from '../../../server/axios';
+import axios from '../../../services/axios';
 
 function* loginRequest({ payload }) {
   try {

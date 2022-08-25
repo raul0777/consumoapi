@@ -3,9 +3,9 @@ import { toast } from 'react-toastify';
 import { isEmail } from 'validator';
 import { useDispatch, useSelector } from 'react-redux';
 import { get } from 'lodash';
-import { Container } from '../../style/GlobalStyler';
+import { Container } from '../../styles/GlobalStyles';
 import { Form } from './styled';
-import * as actions from '../../storybook/modules/auth/actions';
+import * as actions from '../../store/modules/auth/actions';
 import Loading from '../../components/Loading';
 
 export default function Login(props) {

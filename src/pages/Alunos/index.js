@@ -8,9 +8,9 @@ import {
   FaExclamation,
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { Container } from '../../style/GlobalStyler';
+import { Container } from '../../styles/GlobalStyles';
 import { AlunoContainer, ProfilePicture, NovoAluno } from './styled';
-import axios from '../../server/axios';
+import axios from '../../services/axios';
 import Loading from '../../components/Loading';
 
 export default function Alunos() {
